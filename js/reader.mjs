@@ -9,7 +9,7 @@ const langMap = new Map([
   ["ja", "ja-JP"],
 ]);
 const voiceMap = new Map([
-  ["en", "Google UK English Mal"],
+  ["en", "Google UK English Male"],
   ["es", "Google Español"],
   ["ja", "Google 日本語"],
 ]);
