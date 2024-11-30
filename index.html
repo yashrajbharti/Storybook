@@ -24,16 +24,27 @@
                 placeholder="Let's Create a Story, start by writing a few words..." required></textarea>
         </div>
         <button type="button" class="secondary generate"><span><span>Complete the Story using AI</span><img
-                    src="./icons/Gemini-Icon.png" alt="" height="20px"></span></button> <button type="submit">Finish and
+                    src="./icons/Gemini-Icon.png" class="animate" alt="" height="20px"></span></button> <button
+            type="submit">Finish and
             Start
             Reading</button>
     </form>
 
+    <dialog open>
+        <img src="./icons/Tick.svg" alt="" height="65px">
+        <h2>Well Done!</h2>
+        <p>You finished reading the story, I hope you loved it!, why not read another one?</p>
+        <button>Create Another Story</button>
+        <form action="" method="dialog">
+            <button class="secondary close" type="submit"><img src="./icons/Close.svg" alt="" height="20px"></button>
+        </form>
+    </dialog>
+
     <template id="read-aloud-template">
         <read-aloud-component lang="en-US">
             <p slot="paragraph" role="status"></p>
-            <button slot="retry-btn" class="secondary retry">Go Again <img src="./icons/Retry.svg" alt=""
-                    height="10px"></button>
+            <button slot="retry-btn" class="secondary retry">Go Again <img class="animate" src="./icons/Retry.svg"
+                    alt="" height="10px"></button>
             <button slot="start-btn">Start Reading</button>
         </read-aloud-component>
     </template>

@@ -29,3 +29,51 @@ button.secondary>span {
     gap: 10px;
     align-items: center;
 }
+
+dialog {
+    background-color: var(--md-sys-color-background);
+    border-radius: 20px;
+    border: 1px solid var(--md-sys-color-surface-container);
+    padding: 50px 20px;
+}
+
+dialog p {
+    border: none;
+    background-color: var(--md-sys-color-background);
+}
+
+dialog h2 {
+    color: var(--md-sys-color-primary);
+}
+
+dialog .close {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-end: 20px;
+    border-radius: 50%;
+    padding: 10px;
+    aspect-ratio: 1/1;
+    block-size: 40px;
+    inline-size: 40px;
+}
+
+
+@media (prefers-reduced-motion: no-preference) {
+    button.secondary:hover img.animate {
+        animation: rotate 0.9s ease forwards;
+    }
+
+    @keyframes rotate {
+        0% {
+            rotate: 0;
+        }
+
+        35% {
+            rotate: -180deg;
+        }
+
+        100% {
+            rotate: 0;
+        }
+    }
+}
