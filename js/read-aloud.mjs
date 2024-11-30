@@ -7,6 +7,7 @@ class ReadAloudComponent extends HTMLElement {
 
     container.innerHTML = `
         <slot name="paragraph"></slot>
+        <slot name="retry-btn"></slot>
         <slot name="start-btn"></slot>
       `;
 
@@ -45,6 +46,11 @@ class ReadAloudComponent extends HTMLElement {
     startBtn.addEventListener("slotchange", () => {
       this.attachStartButton();
     });
+
+    const retryBtn = this.shadowRoot.querySelector('slot[name="retry-btn"]');
+    retryBtn.addEventListener("slotchange", () => {
+      this.attachRetryButton();
+    });
   }
 
   attachStartButton() {
@@ -60,7 +66,17 @@ class ReadAloudComponent extends HTMLElement {
       }
     });
   }
+  attachRetryButton() {
+    const retryBtn = this.querySelector('[slot="retry-btn"]');
+    if (!retryBtn) {
+      console.error("No retry button found!");
+      return;
+    }
 
+    retryBtn.addEventListener("click", () => {
+      window.location.reload();
+    });
+  }
   initSpeechRecognition() {
     const paragraphElement = this.querySelector('[slot="paragraph"]');
     if (!paragraphElement) {

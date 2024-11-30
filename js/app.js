@@ -8,6 +8,6 @@ const form = document.getElementById("read-aloud-form");
 
 form.addEventListener("submit", read);
 
-const generateButton = document.querySelector("button.secondary");
+const generateButton = document.querySelector("button.secondary.generate");
 
 generateButton.addEventListener("click", write);
