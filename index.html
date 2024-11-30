@@ -16,8 +16,14 @@
     <h1>Storybook</h1>
 
     <form id="read-aloud-form">
-        <textarea name="textarea" id="textarea" rows="10" placeholder="Let's Create a Story..."></textarea>
-        <button type="button" class="secondary">Write a Story using AI</button> <button type="submit">Finish and Start
+        <div>
+            <label for="textarea">Start a Story by writing a few words, then Complete it using AI!</label>
+            <textarea name="textarea" id="textarea" rows="10"
+                placeholder="Let's Create a Story, start by writing a few words..." required></textarea>
+        </div>
+        <button type="button" class="secondary"><span><span>Complete the Story using AI</span><img
+                    src="./icons/Gemini-Icon.png" alt="" height="20px"></span></button> <button type="submit">Finish and
+            Start
             Reading</button>
     </form>
 
@@ -27,25 +33,6 @@
             <button slot="start-btn">Start Reading</button>
         </read-aloud-component>
     </template>
-
-    <script>
-        const form = document.getElementById('read-aloud-form');
-        const template = document.getElementById('read-aloud-template').content;
-
-        form.addEventListener('submit', function (event) {
-            event.preventDefault();
-            const text = document.getElementById('textarea').value;
-            form.style.display = 'none';
-            const clone = document.importNode(template, true);
-            clone.querySelector('p').textContent = text;
-            document.body.appendChild(clone);
-            const readAloudComponent = document.querySelector('read-aloud-component');
-            readAloudComponent.addEventListener('reading-complete', (event) => {
-                console.log(event.detail.message);
-                alert('Reading completed!');
-            });
-        });
-    </script>
 
     <script src="./js/app.js" type="module"></script>
 
