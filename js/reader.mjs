@@ -1,3 +1,5 @@
+import shoot from "./confetti.mjs";
+
 const template = document.getElementById("read-aloud-template").content;
 const form = document.getElementById("read-aloud-form");
 
@@ -11,7 +13,9 @@ function read(event) {
   const readAloudComponent = document.querySelector("read-aloud-component");
   readAloudComponent.addEventListener("reading-complete", (event) => {
     console.log(event.detail.message);
-    alert("Reading completed!");
+    setTimeout(shoot, 0);
+    setTimeout(shoot, 100);
+    setTimeout(shoot, 200);
   });
 }
 
