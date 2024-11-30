@@ -204,14 +204,13 @@ class ReadAloudComponent extends HTMLElement {
       this.recognition.interimResults = true;
       this.recognition.continuous = true;
 
-      let timeoutId = null; // Timer for auto-advancing the word
+      let timeoutId = null;
 
       const resetTimeout = () => {
         if (timeoutId) {
           clearTimeout(timeoutId);
         }
         timeoutId = setTimeout(() => {
-          // Automatically advance the word if the user gets stuck
           currentWordIndex++;
           if (currentWordIndex < paragraphText.length) {
             this.highlightCurrentWord(
