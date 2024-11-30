@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Storybook</title>
+    <link rel="stylesheet" href="./styles/styles.css">
+    <link rel="stylesheet" href="./styles/storybook.css">
+</head>
+
+<body>
+    <h1>Storybook</h1>
+
+    <form id="read-aloud-form">
+        <textarea name="textarea" id="textarea" rows="10" placeholder="Enter text to read..."></textarea>
+        <button type="submit">Create a Story</button>
+    </form>
+
+    <template id="read-aloud-template">
+        <read-aloud-component lang="en-US">
+            <p slot="paragraph" role="status"></p>
+            <button slot="start-btn">Start Reading</button>
+        </read-aloud-component>
+    </template>
+
+    <script>
+        const form = document.getElementById('read-aloud-form');
+        const template = document.getElementById('read-aloud-template').content;
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            const text = document.getElementById('textarea').value;
+            form.style.display = 'none';
+            const clone = document.importNode(template, true);
+            clone.querySelector('p').textContent = text;
+            document.body.appendChild(clone);
+            const readAloudComponent = document.querySelector('read-aloud-component');
+            readAloudComponent.addEventListener('reading-complete', (event) => {
+                console.log(event.detail.message);
+                alert('Reading completed!');
+            });
+        });
+    </script>
+
+    <script src="./js/app.js" type="module"></script>
+
+</body>
+
+</html>
