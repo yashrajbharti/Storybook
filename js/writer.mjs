@@ -26,7 +26,7 @@ const write = async () => {
 };
 
 textArea.addEventListener("input", () => {
-  prompt = prompt || textArea.value.trim();
+  prompt = textArea.value.trim();
 });
 
 export default write;
