@@ -1,4 +1,5 @@
 const template = document.getElementById("read-aloud-template").content;
+const form = document.getElementById("read-aloud-form");
 
 function read(event) {
   event.preventDefault();
