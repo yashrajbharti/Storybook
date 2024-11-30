@@ -22,7 +22,7 @@ const write = async () => {
     }
   } catch {
     textArea.value =
-      "Uh Oh!, Seems the AI has some hiccup while creating the story, just click the button again and it should be able to generate.";
+      "Uh Oh!, Seems the AI has some hiccup while creating the story, just click the button again or try a different prompt to generate.";
   }
 };
 
