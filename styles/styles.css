@@ -1,0 +1,89 @@
+:root,
+:host {
+    --md-sys-color-background: #101418;
+    --md-sys-color-on-background: #e0e2e8;
+    --md-sys-color-surface: #101418;
+    --md-sys-color-surface-dim: #101418;
+    --md-sys-color-surface-bright: #363a3e;
+    --md-sys-color-surface-container-lowest: #0b0f12;
+    --md-sys-color-surface-container-low: #181c20;
+    --md-sys-color-surface-container: #1c2024;
+    --md-sys-color-surface-container-high: #272a2f;
+    --md-sys-color-surface-container-highest: #313539;
+    --md-sys-color-on-surface: #e0e2e8;
+    --md-sys-color-surface-variant: #404850;
+    --md-sys-color-on-surface-variant: #bfc7d1;
+    --md-sys-color-inverse-surface: #e0e2e8;
+    --md-sys-color-inverse-on-surface: #2d3135;
+    --md-sys-color-outline: #8a919b;
+    --md-sys-color-outline-variant: #404850;
+    --md-sys-color-shadow: #000000;
+    --md-sys-color-scrim: #000000;
+    --md-sys-color-surface-tint: #93ccff;
+    --md-sys-color-primary: #baddff;
+    --md-sys-color-on-primary: #003351;
+    --md-sys-color-primary-container: #63b7f8;
+    --md-sys-color-on-primary-container: #00273f;
+    --md-sys-color-inverse-primary: #006398;
+    --md-sys-color-secondary: #adcae6;
+    --md-sys-color-on-secondary: #14334a;
+    --md-sys-color-secondary-container: #26425a;
+    --md-sys-color-on-secondary-container: #bbd8f5;
+    --md-sys-color-tertiary: #f5cbff;
+    --md-sys-color-on-tertiary: #4d1563;
+    --md-sys-color-tertiary-container: #d898ed;
+    --md-sys-color-on-tertiary-container: #3f0356;
+    --md-sys-color-error: #ffb4ab;
+    --md-sys-color-on-error: #690005;
+    --md-sys-color-error-container: #93000a;
+    --md-sys-color-on-error-container: #ffdad6;
+}
+
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif, sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    block-size: 100dvh;
+    margin: 0;
+    background-color: var(--md-sys-color-background);
+}
+
+h1 {
+    color: var(--md-sys-color-on-background);
+}
+
+p {
+    margin-block-start: 20px;
+    font-size: 20px;
+    color: var(--md-sys-color-on-background);
+    background-color: var(--md-sys-color-surface-container);
+    padding: 15px;
+    border-radius: 5px;
+    inline-size: 80%;
+    margin-inline: auto;
+    line-height: 1.6;
+    border: 1px solid var(--md-sys-color-outline);
+}
+
+.highlighted-read-out {
+    text-decoration: underline;
+    color: var(--md-sys-color-primary);
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+    margin-block-start: 20px;
+}
+
+button:hover {
+    background-color: var(--md-sys-color-on-secondary-container);
+}
