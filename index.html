@@ -15,7 +15,7 @@
 </head>
 
 <body>
-    <h1>Storybook</h1>
+    <h1><img src="./icons/Book.svg" alt="" height="30px"> Storybook</h1>
 
     <form id="read-aloud-form">
         <div>
@@ -30,11 +30,18 @@
             Reading</button>
     </form>
 
-    <dialog open>
+    <div class="translation" hidden>
+        <span>Translate your generated story:</span>
+        <button type="button" class="secondary">🇬🇧</button>
+        <button type="button" class="secondary">🇪🇸</button>
+        <button type="button" class="secondary">🇯🇵</button>
+    </div>
+
+    <dialog>
         <img src="./icons/Tick.svg" alt="" height="65px">
         <h2>Well Done!</h2>
         <p>You finished reading the story, I hope you loved it!, why not read another one?</p>
-        <button>Create Another Story</button>
+        <button onclick="window.location.reload()">Create Another Story</button>
         <form action="" method="dialog">
             <button class="secondary close" type="submit"><img src="./icons/Close.svg" alt="" height="20px"></button>
         </form>

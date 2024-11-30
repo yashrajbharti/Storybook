@@ -1,6 +1,13 @@
 body {
     min-block-size: 100dvh;
     block-size: auto;
+    padding: 15px;
+}
+
+h1 {
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
 textarea {
@@ -57,6 +64,20 @@ dialog .close {
     inline-size: 40px;
 }
 
+.translation span {
+    color: var(--md-sys-color-primary);
+}
+
+.translation {
+    block-size: 0;
+    animation: opaque 0.3s ease forwards;
+}
+
+@keyframes opaque {
+    to {
+        block-size: 100px;
+    }
+}
 
 @media (prefers-reduced-motion: no-preference) {
     button.secondary:hover img.animate {

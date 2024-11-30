@@ -12,6 +12,7 @@ function read(event) {
   document.body.appendChild(clone);
   const readAloudComponent = document.querySelector("read-aloud-component");
   readAloudComponent.addEventListener("reading-complete", (event) => {
+    document.querySelector("dialog").showModal();
     console.log(event.detail.message);
     setTimeout(shoot, 0);
     setTimeout(shoot, 100);

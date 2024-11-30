@@ -1,6 +1,8 @@
 import DOMPurify from "https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.es.mjs";
 
 const textArea = document.getElementById("textarea");
+const translationWrapper = document.querySelector(".translation");
+
 let prompt = "";
 
 const write = async () => {
@@ -20,9 +22,11 @@ const write = async () => {
       fullResponse = chunk.trim();
       textArea.value = DOMPurify.sanitize(fullResponse);
     }
+    translationWrapper.removeAttribute("hidden");
   } catch {
     textArea.value =
       "Uh Oh!, Seems the AI has some hiccup while creating the story, just click the button again or try a different prompt to generate.";
+    translationWrapper.setAttribute("hidden", "");
   }
 };
 
