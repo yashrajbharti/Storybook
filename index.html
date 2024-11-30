@@ -28,7 +28,7 @@
             type="submit">Finish and
             Start
             Reading</button>
-        <div class="translation" hidden>
+        <div class="translation" hidden role="status">
             <span>Translate your generated story:</span>
             <button type="button" class="secondary" aria-label="English" title="en">🇬🇧</button>
             <button type="button" class="secondary" aria-label="Spanish" title="es">🇪🇸</button>
@@ -48,12 +48,12 @@
     </dialog>
 
     <template id="read-aloud-template">
-        <read-aloud-component lang="en-US" rate="0.8" voice="Google UK English Male">
+        <read-aloud-component lang="en-US" rate="1" voice="Google UK English Male">
             <p slot="paragraph" role="status"></p>
             <button slot="retry-btn" class="secondary retry">Go Again <img class="animate" src="./icons/Retry.svg"
                     alt="" height="10px"></button>
-            <button slot="start-btn">Start Reading</button>
-            <button slot="speaker-btn">Speak</button>
+            <button slot="start-btn">Start Reading 🎤︎</button>
+            <button slot="speaker-btn" class="secondary">Start Speaker 🔊</button>
         </read-aloud-component>
     </template>
 

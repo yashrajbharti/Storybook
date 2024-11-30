@@ -17,6 +17,9 @@ class ReadAloudComponent extends HTMLElement {
     this.highlight = true;
     this.speechRate = 1;
     this.selectedVoice = "default";
+    this.isSpeaking = false;
+    this.synthesisUtterance = null;
+    this.recognition = null;
   }
 
   static get observedAttributes() {
@@ -94,12 +97,18 @@ class ReadAloudComponent extends HTMLElement {
       return;
     }
 
+    speakerBtn.textContent = "Start Speaker  🔊";
+
     speakerBtn.addEventListener("click", () => {
-      this.readAloud();
+      if (this.isSpeaking) {
+        this.stopSpeechSynthesis(speakerBtn);
+      } else {
+        this.startSpeechSynthesis(speakerBtn);
+      }
     });
   }
 
-  readAloud() {
+  startSpeechSynthesis(button) {
     const paragraphElement = this.querySelector('[slot="paragraph"]');
     if (!paragraphElement) {
       console.error("No paragraph found!");
@@ -107,28 +116,71 @@ class ReadAloudComponent extends HTMLElement {
     }
 
     const text = paragraphElement.textContent.trim();
-    const utterance = new SpeechSynthesisUtterance(text);
+    if (!text) {
+      console.error("No text to speak!");
+      return;
+    }
 
-    utterance.rate = this.speechRate;
-    utterance.lang = this.getAttribute("lang") || "en-US";
+    const words = text.split(" ");
+    const language = this.getAttribute("lang") || "en-US";
+    const voiceName = this.selectedVoice;
+    const rate = this.speechRate;
 
-    if (this.selectedVoice !== "default") {
-      const availableVoices = speechSynthesis.getVoices();
-      const voice = availableVoices.find((v) => v.name === this.selectedVoice);
-      if (voice) {
-        utterance.voice = voice;
+    let currentWordIndex = 0;
+
+    const utterance = new SpeechSynthesisUtterance();
+    utterance.lang = language;
+    utterance.rate = rate;
+
+    const voices = speechSynthesis.getVoices();
+    if (voices.length > 0) {
+      const selectedVoice = voices.find((v) => v.name === voiceName);
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
       }
     }
 
-    speechSynthesis.speak(utterance);
+    const speakCurrentWord = () => {
+      if (currentWordIndex < words.length) {
+        utterance.text = words[currentWordIndex];
+        this.highlightCurrentWord(paragraphElement, words, currentWordIndex);
+        speechSynthesis.speak(utterance);
+        currentWordIndex++;
+      } else {
+        this.stopSpeechSynthesis(button);
+      }
+    };
 
     utterance.onend = () => {
-      this.dispatchEvent(
-        new CustomEvent("synthesis-complete", {
-          detail: { message: "Speech synthesis completed" },
-        })
-      );
+      speakCurrentWord();
     };
+
+    this.synthesisUtterance = utterance;
+    this.isSpeaking = true;
+    button.textContent = "Stop Speaker 🔇";
+
+    speakCurrentWord();
+  }
+
+  stopSpeechSynthesis(button) {
+    if (speechSynthesis.speaking) {
+      speechSynthesis.cancel();
+    }
+    this.isSpeaking = false;
+    button.textContent = "Start Speaker  🔊";
+  }
+
+  highlightCurrentWord(paragraphElement, words, currentWordIndex) {
+    if (this.highlight) {
+      const content = words
+        .map((word, index) =>
+          index === currentWordIndex
+            ? `<span class="highlighted-read-out">${word}</span>`
+            : word
+        )
+        .join(" ");
+      paragraphElement.innerHTML = content;
+    }
   }
 
   initSpeechRecognition() {
@@ -142,89 +194,86 @@ class ReadAloudComponent extends HTMLElement {
     let currentWordIndex = 0;
 
     const language = this.getAttribute("lang") || "en-US";
-    const highlight = this.highlight;
-    const voice = this.selectedVoice;
-    const rate = this.speechRate;
 
     window.SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
 
     if ("SpeechRecognition" in window) {
-      console.log("Web Speech API is supported");
-
       this.recognition = new SpeechRecognition();
       this.recognition.lang = language;
       this.recognition.interimResults = true;
       this.recognition.continuous = true;
 
-      this.highlightCurrentWord = (
-        paragraphElement,
-        paragraphText,
-        index,
-        highlight
-      ) => {
-        if (highlight) {
-          const words = paragraphText
-            .map((word, idx) => {
-              return idx === index
-                ? `<span class="highlighted-read-out">${word}</span>`
-                : word;
-            })
-            .join(" ");
-          paragraphElement.innerHTML = words;
-        } else {
-          paragraphElement.innerHTML = paragraphText.join(" ");
+      let timeoutId = null; // Timer for auto-advancing the word
+
+      const resetTimeout = () => {
+        if (timeoutId) {
+          clearTimeout(timeoutId);
         }
-      };
-
-      this.highlightCurrentWord(
-        paragraphElement,
-        paragraphText,
-        currentWordIndex,
-        highlight
-      );
-
-      this.stripPunctuation = (word) => {
-        return word.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "");
-      };
-
-      this.recognition.onresult = (event) => {
-        let transcript = event.results[event.resultIndex][0].transcript
-          .trim()
-          .toLowerCase();
-
-        let currentWord = this.stripPunctuation(
-          paragraphText[currentWordIndex].toLowerCase()
-        );
-
-        if (transcript.includes(currentWord)) {
+        timeoutId = setTimeout(() => {
+          // Automatically advance the word if the user gets stuck
           currentWordIndex++;
-          this.highlightCurrentWord(
-            paragraphElement,
-            paragraphText,
-            currentWordIndex,
-            highlight
-          );
-
-          if (currentWordIndex >= paragraphText.length) {
+          if (currentWordIndex < paragraphText.length) {
+            this.highlightCurrentWord(
+              paragraphElement,
+              paragraphText,
+              currentWordIndex
+            );
+          } else {
             this.recognition.stop();
-
             this.dispatchEvent(
               new CustomEvent("reading-complete", {
                 detail: { message: "Reading completed" },
               })
             );
           }
+        }, 5000);
+      };
+
+      resetTimeout();
+
+      this.recognition.onresult = (event) => {
+        let transcript = event.results[event.resultIndex][0].transcript
+          .trim()
+          .toLowerCase();
+
+        const currentWord = paragraphText[currentWordIndex]
+          .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "")
+          .toLowerCase();
+
+        if (transcript.includes(currentWord)) {
+          currentWordIndex++;
+          this.highlightCurrentWord(
+            paragraphElement,
+            paragraphText,
+            currentWordIndex
+          );
+
+          if (currentWordIndex >= paragraphText.length) {
+            clearTimeout(timeoutId);
+            this.recognition.stop();
+            this.dispatchEvent(
+              new CustomEvent("reading-complete", {
+                detail: { message: "Reading completed" },
+              })
+            );
+          } else {
+            resetTimeout();
+          }
         }
       };
 
       this.recognition.onerror = (event) => {
         console.error(`Error occurred: ${event.error}`);
+        clearTimeout(timeoutId);
       };
 
       this.recognition.onend = () => {
         if (currentWordIndex < paragraphText.length) {
           this.recognition.start();
+          resetTimeout();
+        } else {
+          clearTimeout(timeoutId);
         }
       };
     } else {
@@ -234,5 +283,4 @@ class ReadAloudComponent extends HTMLElement {
     }
   }
 }
-
 export default ReadAloudComponent;
