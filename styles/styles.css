@@ -84,6 +84,15 @@ button {
     margin-block-start: 20px;
 }
 
+button.secondary {
+    background-color: var(--md-sys-color-surface-container-low);
+    color: var(--md-sys-color-primary);
+}
+
 button:hover {
     background-color: var(--md-sys-color-on-secondary-container);
+}
+
+button.secondary:hover {
+    background-color: var(--md-sys-color-on-primary-container);
 }
