@@ -6,6 +6,7 @@ let prompt = "";
 const write = async () => {
   textArea.value = "Generating...";
   if (!prompt) {
+    textArea.value = "Add a few lines here...";
     return;
   }
   try {
@@ -28,5 +29,7 @@ const write = async () => {
 textArea.addEventListener("input", () => {
   prompt = textArea.value.trim();
 });
+
+textArea.addEventListener(`focus`, () => textArea.select());
 
 export default write;
