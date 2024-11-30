@@ -20,7 +20,7 @@
     <form id="read-aloud-form">
         <div>
             <label for="textarea">Start a Story by writing a few words, then Complete it using AI!</label>
-            <textarea name="textarea" id="textarea" rows="10"
+            <textarea name="textarea" id="textarea" rows="10" data-language="en"
                 placeholder="Let's Create a Story, start by writing a few words..." required></textarea>
         </div>
         <button type="button" class="secondary generate"><span><span>Complete the Story using AI</span><img
@@ -32,9 +32,9 @@
 
     <div class="translation" hidden>
         <span>Translate your generated story:</span>
-        <button type="button" class="secondary">🇬🇧</button>
-        <button type="button" class="secondary">🇪🇸</button>
-        <button type="button" class="secondary">🇯🇵</button>
+        <button type="button" class="secondary" aria-label="English" title="en">🇬🇧</button>
+        <button type="button" class="secondary" aria-label="Spanish" title="es">🇪🇸</button>
+        <button type="button" class="secondary" aria-label="Japanese" title="ja">🇯🇵</button>
     </div>
 
     <dialog>
@@ -57,7 +57,7 @@
     </template>
 
     <script src="./js/app.js" type="module"></script>
-
+    <script src="./js/translation.mjs" type="module"></script>
 </body>
 
 </html>
