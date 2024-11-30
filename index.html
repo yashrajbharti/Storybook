@@ -48,11 +48,12 @@
     </dialog>
 
     <template id="read-aloud-template">
-        <read-aloud-component lang="en-US">
+        <read-aloud-component lang="en-US" rate="1.2" voice="Google UK English Male">
             <p slot="paragraph" role="status"></p>
             <button slot="retry-btn" class="secondary retry">Go Again <img class="animate" src="./icons/Retry.svg"
                     alt="" height="10px"></button>
             <button slot="start-btn">Start Reading</button>
+            <button slot="speaker-btn">Speak</button>
         </read-aloud-component>
     </template>
 

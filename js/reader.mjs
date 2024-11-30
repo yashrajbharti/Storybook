@@ -8,6 +8,11 @@ const langMap = new Map([
   ["es", "es-ES"],
   ["ja", "ja-JP"],
 ]);
+const voiceMap = new Map([
+  ["en", "Google UK English Mal"],
+  ["es", "Google Español"],
+  ["ja", "Google 日本語"],
+]);
 
 function read(event) {
   event.preventDefault();
@@ -15,18 +20,21 @@ function read(event) {
   const text = textArea.value;
   form.style.display = "none";
   const clone = document.importNode(template, true);
+  const readAloudComponent = clone.querySelector("read-aloud-component");
   clone.querySelector("p").textContent = text;
-  clone
-    .querySelector("read-aloud-component")
-    .setAttribute("lang", langMap.get(textArea.dataset.language));
+  readAloudComponent.setAttribute(
+    "lang",
+    langMap.get(textArea.dataset.language)
+  );
+  readAloudComponent.setAttribute(
+    "voice",
+    voiceMap.get(textArea.dataset.language)
+  );
   document.body.appendChild(clone);
-  const readAloudComponent = document.querySelector("read-aloud-component");
   readAloudComponent.addEventListener("reading-complete", (event) => {
     document.querySelector("dialog").showModal();
 
-    setTimeout(shoot, 0);
-    setTimeout(shoot, 100);
-    setTimeout(shoot, 200);
+    [0, 100, 200].forEach((delay) => setTimeout(shoot, delay));
   });
 }
 

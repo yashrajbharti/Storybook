@@ -9,6 +9,7 @@ class ReadAloudComponent extends HTMLElement {
         <slot name="paragraph"></slot>
         <slot name="retry-btn"></slot>
         <slot name="start-btn"></slot>
+        <slot name="speaker-btn"></slot>
       `;
 
     shadow.appendChild(container);
@@ -51,6 +52,13 @@ class ReadAloudComponent extends HTMLElement {
     retryBtn.addEventListener("slotchange", () => {
       this.attachRetryButton();
     });
+
+    const speakerBtn = this.shadowRoot.querySelector(
+      'slot[name="speaker-btn"]'
+    );
+    speakerBtn.addEventListener("slotchange", () => {
+      this.attachSpeakerButton();
+    });
   }
 
   attachStartButton() {
@@ -66,6 +74,7 @@ class ReadAloudComponent extends HTMLElement {
       }
     });
   }
+
   attachRetryButton() {
     const retryBtn = this.querySelector('[slot="retry-btn"]');
     if (!retryBtn) {
@@ -77,6 +86,51 @@ class ReadAloudComponent extends HTMLElement {
       window.location.reload();
     });
   }
+
+  attachSpeakerButton() {
+    const speakerBtn = this.querySelector('[slot="speaker-btn"]');
+    if (!speakerBtn) {
+      console.error("No speaker button found!");
+      return;
+    }
+
+    speakerBtn.addEventListener("click", () => {
+      this.readAloud();
+    });
+  }
+
+  readAloud() {
+    const paragraphElement = this.querySelector('[slot="paragraph"]');
+    if (!paragraphElement) {
+      console.error("No paragraph found!");
+      return;
+    }
+
+    const text = paragraphElement.textContent.trim();
+    const utterance = new SpeechSynthesisUtterance(text);
+
+    utterance.rate = this.speechRate;
+    utterance.lang = this.getAttribute("lang") || "en-US";
+
+    if (this.selectedVoice !== "default") {
+      const availableVoices = speechSynthesis.getVoices();
+      const voice = availableVoices.find((v) => v.name === this.selectedVoice);
+      if (voice) {
+        utterance.voice = voice;
+      }
+    }
+
+    speechSynthesis.speak(utterance);
+
+    utterance.onend = () => {
+      this.dispatchEvent(
+        new CustomEvent("synthesis-complete", {
+          detail: { message: "Speech synthesis completed" },
+        })
+      );
+    };
+  }
+
   initSpeechRecognition() {
     const paragraphElement = this.querySelector('[slot="paragraph"]');
     if (!paragraphElement) {
