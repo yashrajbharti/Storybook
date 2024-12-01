@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="./styles/styles.css">
     <link rel="stylesheet" href="./styles/storybook.css">
     <link rel="shortcut icon" href="./icons/Book.svg" type="image/x-icon">
+    <link rel="manifest" href="./manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/@tsparticles/confetti@3.0.3/tsparticles.confetti.bundle.min.js"
         defer></script>
 </head>
@@ -58,7 +59,18 @@
     </template>
 
     <script src="./js/app.js" type="module"></script>
-    <script src="./js/translation.mjs" type="module"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./js/service-worker.js')
+                .then(function (registration) {
+                    console.log('Service Worker registered with scope:', registration.scope);
+                })
+                .catch(function (error) {
+                    console.log('Service Worker registration failed:', error);
+                });
+        }
+    </script>
+
 </body>
 
 </html>
