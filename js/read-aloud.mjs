@@ -10,6 +10,7 @@ class ReadAloudComponent extends HTMLElement {
         <slot name="retry-btn"></slot>
         <slot name="start-btn"></slot>
         <slot name="speaker-btn"></slot>
+        <slot name="pause-resume-btn"></slot>
       `;
 
     shadow.appendChild(container);
@@ -18,6 +19,7 @@ class ReadAloudComponent extends HTMLElement {
     this.speechRate = 1;
     this.selectedVoice = "default";
     this.isSpeaking = false;
+    this.isPaused = false;
     this.synthesisUtterance = null;
     this.recognition = null;
   }
@@ -62,6 +64,13 @@ class ReadAloudComponent extends HTMLElement {
     speakerBtn.addEventListener("slotchange", () => {
       this.attachSpeakerButton();
     });
+
+    const pauseResumeBtn = this.shadowRoot.querySelector(
+      'slot[name="pause-resume-btn"]'
+    );
+    pauseResumeBtn.addEventListener("slotchange", () => {
+      this.attachPauseResumeButton();
+    });
   }
 
   attachStartButton() {
@@ -104,6 +113,25 @@ class ReadAloudComponent extends HTMLElement {
         this.stopSpeechSynthesis(speakerBtn);
       } else {
         this.startSpeechSynthesis(speakerBtn);
+      }
+    });
+  }
+
+  attachPauseResumeButton() {
+    const pauseResumeBtn = this.querySelector('[slot="pause-resume-btn"]');
+    if (!pauseResumeBtn) {
+      console.error("No pause-resume button found!");
+      return;
+    }
+
+    pauseResumeBtn.textContent = "Pause Speaker 🔊";
+    pauseResumeBtn.style.display = "none"; // Hidden by default
+
+    pauseResumeBtn.addEventListener("click", () => {
+      if (this.isSpeaking && !this.isPaused) {
+        this.pauseSpeechSynthesis(pauseResumeBtn);
+      } else if (this.isSpeaking && this.isPaused) {
+        this.resumeSpeechSynthesis(pauseResumeBtn);
       }
     });
   }
@@ -157,7 +185,15 @@ class ReadAloudComponent extends HTMLElement {
 
     this.synthesisUtterance = utterance;
     this.isSpeaking = true;
+    this.isPaused = false;
     button.textContent = "Stop Speaker 🔇";
+
+    // Show pause/resume button when speaking starts
+    const pauseResumeBtn = this.querySelector('[slot="pause-resume-btn"]');
+    if (pauseResumeBtn) {
+      pauseResumeBtn.style.display = "inline-block";
+      pauseResumeBtn.textContent = "Pause Speaker ⏸️";
+    }
 
     speakCurrentWord();
   }
@@ -167,7 +203,30 @@ class ReadAloudComponent extends HTMLElement {
       speechSynthesis.cancel();
     }
     this.isSpeaking = false;
+    this.isPaused = false;
     button.textContent = "Start Speaker  🔊";
+
+    // Hide pause/resume button when speaking stops
+    const pauseResumeBtn = this.querySelector('[slot="pause-resume-btn"]');
+    if (pauseResumeBtn) {
+      pauseResumeBtn.style.display = "none";
+    }
+  }
+
+  pauseSpeechSynthesis(button) {
+    if (speechSynthesis.speaking) {
+      speechSynthesis.pause();
+      this.isPaused = true;
+      button.textContent = "Resume Speaker ▶️";
+    }
+  }
+
+  resumeSpeechSynthesis(button) {
+    if (speechSynthesis.paused) {
+      speechSynthesis.resume();
+      this.isPaused = false;
+      button.textContent = "Pause Speaker ⏸️";
+    }
   }
 
   highlightCurrentWord(paragraphElement, words, currentWordIndex) {

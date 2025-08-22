@@ -44,7 +44,8 @@
         <p>You finished reading the story, I hope you loved it!, why not read another one?</p>
         <button onclick="window.location.reload()">Create Another Story</button>
         <form action="" method="dialog">
-            <button class="secondary close" type="submit"><img src="./icons/Close.svg" alt="" height="20px"></button>
+            <button class="secondary close" type="submit" aria-label="close"><img title="close" src="./icons/Close.svg"
+                    alt="" height="20px"></button>
         </form>
     </dialog>
 
@@ -55,6 +56,7 @@
                     alt="" height="10px"></button>
             <button slot="start-btn">Start Reading 🎤︎</button>
             <button slot="speaker-btn" class="secondary">Start Speaker 🔊</button>
+            <button slot="pause-resume-btn" class="secondary">Pause Speaker 🔊</button>
         </read-aloud-component>
     </template>
 

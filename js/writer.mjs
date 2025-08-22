@@ -12,7 +12,7 @@ const write = async () => {
     return;
   }
   try {
-    const writer = await ai.writer.create();
+    const writer = await Writer.create();
     const stream = await writer.writeStreaming(prompt, {
       context:
         "The request comes from someone who wants to hear a story and has given a prompt.",
@@ -20,7 +20,7 @@ const write = async () => {
     let fullResponse = "";
     for await (const chunk of stream) {
       fullResponse = chunk.trim();
-      textArea.value = DOMPurify.sanitize(fullResponse);
+      textArea.value += DOMPurify.sanitize(fullResponse) + " ";
     }
     translationWrapper.removeAttribute("hidden");
   } catch {
