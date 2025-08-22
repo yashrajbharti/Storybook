@@ -22,6 +22,9 @@ class ReadAloudComponent extends HTMLElement {
     this.isPaused = false;
     this.synthesisUtterance = null;
     this.recognition = null;
+    this.currentWordIndex = 0;
+    this.words = [];
+    this.paragraphElement = null;
   }
 
   static get observedAttributes() {
@@ -125,7 +128,6 @@ class ReadAloudComponent extends HTMLElement {
     }
 
     pauseResumeBtn.textContent = "Pause Speaker 🔊";
-    pauseResumeBtn.style.display = "none"; // Hidden by default
 
     pauseResumeBtn.addEventListener("click", () => {
       if (this.isSpeaking && !this.isPaused) {
@@ -149,12 +151,33 @@ class ReadAloudComponent extends HTMLElement {
       return;
     }
 
-    const words = text.split(" ");
+    // Store data for pause/resume functionality
+    this.words = text.split(" ");
+    this.paragraphElement = paragraphElement;
+    this.currentWordIndex = 0;
+    this.isPaused = false;
+
+    this.isSpeaking = true;
+    button.textContent = "Stop Speaker 🔇";
+
+    // Update pause/resume button when speaking starts
+    const pauseResumeBtn = this.querySelector('[slot="pause-resume-btn"]');
+    if (pauseResumeBtn) {
+      pauseResumeBtn.textContent = "Pause Speaker ⏸️";
+    }
+
+    this.startSpeechFromIndex(0);
+  }
+
+  startSpeechFromIndex(startIndex) {
+    if (!this.words || !this.paragraphElement) {
+      console.error("No words or paragraph element available!");
+      return;
+    }
+
     const language = this.getAttribute("lang") || "en-US";
     const voiceName = this.selectedVoice;
     const rate = this.speechRate;
-
-    let currentWordIndex = 0;
 
     const utterance = new SpeechSynthesisUtterance();
     utterance.lang = language;
@@ -169,32 +192,44 @@ class ReadAloudComponent extends HTMLElement {
     }
 
     const speakCurrentWord = () => {
-      if (currentWordIndex < words.length) {
-        utterance.text = words[currentWordIndex];
-        this.highlightCurrentWord(paragraphElement, words, currentWordIndex);
+      // Check if we're still supposed to be speaking and not paused
+      if (
+        this.currentWordIndex < this.words.length &&
+        this.isSpeaking &&
+        !this.isPaused
+      ) {
+        utterance.text = this.words[this.currentWordIndex];
+        this.highlightCurrentWord(
+          this.paragraphElement,
+          this.words,
+          this.currentWordIndex
+        );
         speechSynthesis.speak(utterance);
-        currentWordIndex++;
-      } else {
-        this.stopSpeechSynthesis(button);
+        this.currentWordIndex++;
+      } else if (
+        this.currentWordIndex >= this.words.length &&
+        this.isSpeaking
+      ) {
+        // Finished speaking all words
+        const speakerBtn = this.querySelector('[slot="speaker-btn"]');
+        if (speakerBtn) {
+          this.stopSpeechSynthesis(speakerBtn);
+        }
       }
     };
 
     utterance.onend = () => {
-      speakCurrentWord();
+      if (this.isSpeaking && !this.isPaused) {
+        speakCurrentWord();
+      }
+    };
+
+    utterance.onerror = (event) => {
+      console.error("Speech synthesis error:", event.error);
     };
 
     this.synthesisUtterance = utterance;
-    this.isSpeaking = true;
-    this.isPaused = false;
-    button.textContent = "Stop Speaker 🔇";
-
-    // Show pause/resume button when speaking starts
-    const pauseResumeBtn = this.querySelector('[slot="pause-resume-btn"]');
-    if (pauseResumeBtn) {
-      pauseResumeBtn.style.display = "inline-block";
-      pauseResumeBtn.textContent = "Pause Speaker ⏸️";
-    }
-
+    this.currentWordIndex = startIndex;
     speakCurrentWord();
   }
 
@@ -204,28 +239,33 @@ class ReadAloudComponent extends HTMLElement {
     }
     this.isSpeaking = false;
     this.isPaused = false;
+    this.currentWordIndex = 0;
+    this.words = [];
+    this.paragraphElement = null;
     button.textContent = "Start Speaker  🔊";
 
-    // Hide pause/resume button when speaking stops
+    // Reset pause/resume button when speaking stops
     const pauseResumeBtn = this.querySelector('[slot="pause-resume-btn"]');
     if (pauseResumeBtn) {
-      pauseResumeBtn.style.display = "none";
+      pauseResumeBtn.textContent = "Pause Speaker 🔊";
     }
   }
 
   pauseSpeechSynthesis(button) {
     if (speechSynthesis.speaking) {
-      speechSynthesis.pause();
+      // Use cancel instead of pause due to Android WebKit issues
+      speechSynthesis.cancel();
       this.isPaused = true;
       button.textContent = "Resume Speaker ▶️";
     }
   }
 
   resumeSpeechSynthesis(button) {
-    if (speechSynthesis.paused) {
-      speechSynthesis.resume();
+    if (this.isPaused && this.words.length > 0 && this.paragraphElement) {
+      // Restart from where we left off
       this.isPaused = false;
       button.textContent = "Pause Speaker ⏸️";
+      this.startSpeechFromIndex(this.currentWordIndex);
     }
   }
 
